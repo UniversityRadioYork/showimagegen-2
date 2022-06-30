@@ -15,7 +15,7 @@ var imageGenerators []images.ImageGenerator = []images.ImageGenerator{
 	images.LegacyImageGenerator{},
 }
 
-func (e *GenerationEnvironment) GenerateImageForShow(show myradio.Show) {
+func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta) {
 	imageInfo := images.ImageInfo{
 		Title:       show.Title,
 		ShowSubtype: "TODO",
@@ -31,6 +31,6 @@ func (e *GenerationEnvironment) GenerateImageForShow(show myradio.Show) {
 	}
 
 	// TODO
-	e.MyRadioLoginEnvironment.SetShowPhoto(int(show.Id), newImage)
+	e.MyRadioLoginEnvironment.SetShowPhoto(int(show.ShowID), newImage)
 
 }

@@ -43,7 +43,12 @@ func showImageGenerator() {
 		MyRadioLoginEnvironment: myrLoginEnv,
 	}
 
-	for _, show := range env.GetShowsToGenerateImageFor() {
+	shows, err := env.GetShowsToGenerateImageFor()
+	if err != nil {
+		// TODO
+	}
+
+	for _, show := range shows {
 		env.GenerateImageForShow(show)
 	}
 
