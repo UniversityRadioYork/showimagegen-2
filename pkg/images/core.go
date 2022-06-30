@@ -13,5 +13,5 @@ type ImageInfo struct {
 }
 
 type ImageGenerator interface {
-	Generate(show ImageInfo) string
+	Generate(show ImageInfo) (string, error)
 }

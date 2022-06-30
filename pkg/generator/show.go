@@ -24,7 +24,11 @@ func (e *GenerationEnvironment) GenerateImageForShow(show myradio.Show) {
 
 	// TODO: make random choice
 	// TODO: goroutine it
-	newImage := imageGenerators[0].Generate(imageInfo)
+	newImage, err := imageGenerators[0].Generate(imageInfo)
+
+	if err != nil {
+		// TODO
+	}
 
 	// TODO
 	e.MyRadioLoginEnvironment.SetShowPhoto(int(show.Id), newImage)
