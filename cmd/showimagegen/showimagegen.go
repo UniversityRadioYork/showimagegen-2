@@ -20,7 +20,7 @@ import (
 )
 
 func showImageGenerator() {
-	config, err := config.NewConfigFromYAML()
+	config, err := config.NewConfigFromYAML("config.yaml")
 
 	if err != nil {
 		panic(err)
@@ -34,18 +34,21 @@ func showImageGenerator() {
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, myrsess.CtxKeyTimeoutSeconds, config.RequestTimeoutSeconds)
-	myrLoginEnv, err := myrsess.CreateMyRadioLoginSession(ctx)
+	ctx = context.WithValue(ctx, myrsess.CtxKeyMyRadioUsername, config.MyRadioUsername)
+	ctx = context.WithValue(ctx, myrsess.CtxKeyMyRadioPassword, config.MyRadioPassword)
+
+	myrLoginSess, err := myrsess.CreateMyRadioLoginSession(ctx)
 
 	if err != nil {
 		panic(err)
 	}
 
-	defer myrLoginEnv.Close()
+	defer myrLoginSess.Close()
 
 	env := generator.GenerationEnvironment{
 		Config:           config,
 		MyRadioSession:   myr,
-		SetPhotoCallback: myrLoginEnv.SetShowPhoto,
+		SetPhotoCallback: myrLoginSess.SetShowPhoto,
 	}
 
 	shows, err := env.GetShowsToGenerateImageFor()

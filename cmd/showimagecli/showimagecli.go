@@ -40,7 +40,7 @@ func main() {
 
 	switch args[0] {
 	case "generate":
-		config, err := config.NewConfigFromYAML()
+		config, err := config.NewConfigFromYAML("config.yaml")
 		if err != nil {
 			// TODO
 		}

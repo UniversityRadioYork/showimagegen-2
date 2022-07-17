@@ -24,7 +24,7 @@ const (
 // GenerationEnvironment contains all the attributes needed for generating
 // the showimages
 type GenerationEnvironment struct {
-	Config           config.Config
+	Config           *config.Config
 	MyRadioSession   *myradio.Session
 	SetPhotoCallback func(ctx context.Context, path string) error
 }

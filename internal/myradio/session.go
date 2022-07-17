@@ -26,6 +26,14 @@ const (
 	// CtxKeyXSRFToken is the context key for the MyRadio XSRF token in
 	// the session
 	CtxKeyXSRFToken CtxKey = "xsrfToken"
+
+	// CtxKeyMyRadioUsername is the key for the username to authenticate
+	// the MyRadio session with.
+	CtxKeyMyRadioUsername CtxKey = "myRadioUsername"
+
+	// CtxKeyMyRadioPassword is the key for the password to authenticate
+	// the MyRadio session with.
+	CtxKeyMyRadioPassword CtxKey = "myRadioPassword"
 )
 
 // LoginSession provides a login session for MyRadio after authenticating
@@ -90,9 +98,21 @@ func CreateMyRadioLoginSession(ctx context.Context) (*LoginSession, error) {
 }
 
 func (e *LoginSession) login(ctx context.Context) error {
+	ctxUser := ctx.Value(CtxKeyMyRadioUsername)
+	username, ok := ctxUser.(string)
+	if !ok {
+		return fmt.Errorf("%v can't be used as a string myradio username", ctxUser)
+	}
+
+	ctxPass := ctx.Value(CtxKeyMyRadioPassword)
+	password, ok := ctxPass.(string)
+	if !ok {
+		return fmt.Errorf("%v can't be used as a string myradio password", ctxPass)
+	}
+
 	form := url.Values{
-		"myradio_login-user":         []string{"***"},
-		"myradio_login-password":     []string{"***"},
+		"myradio_login-user":         []string{username},
+		"myradio_login-password":     []string{password},
 		"myradio_login-next":         []string{"/myradio"},
 		"myradio_login-__xsrf-token": []string{e.xsrfToken},
 	}
