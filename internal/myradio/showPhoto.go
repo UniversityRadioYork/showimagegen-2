@@ -19,8 +19,10 @@ import (
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
 )
 
-func (e *MyRadioLoginEnvironment) SetShowPhoto(ctx context.Context, path string) error {
-	showId, ok := ctx.Value(generator.CtxShowIDKey).(int)
+// SetShowPhoto will take a context with a CtxShowIDKey value, and a path to an image
+// and set the show image using the *LoginSession
+func (e *LoginSession) SetShowPhoto(ctx context.Context, path string) error {
+	showID, ok := ctx.Value(generator.CtxShowIDKey).(int)
 	if !ok {
 		return fmt.Errorf("%v is not a valid show ID", ctx.Value(generator.CtxShowIDKey))
 	}
@@ -51,7 +53,7 @@ func (e *MyRadioLoginEnvironment) SetShowPhoto(ctx context.Context, path string)
 	}
 	part.Write(contents)
 
-	if err = writer.WriteField("sched_showphoto-show_id", strconv.Itoa(showId)); err != nil {
+	if err = writer.WriteField("sched_showphoto-show_id", strconv.Itoa(showID)); err != nil {
 		return err
 	}
 
@@ -61,7 +63,7 @@ func (e *MyRadioLoginEnvironment) SetShowPhoto(ctx context.Context, path string)
 
 	writer.Close()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("https://ury.org.uk/myradio/Scheduler/showPhoto?show_id=%v", showId), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("https://ury.org.uk/myradio/Scheduler/showPhoto?show_id=%v", showID), body)
 	if err != nil {
 		return err
 	}

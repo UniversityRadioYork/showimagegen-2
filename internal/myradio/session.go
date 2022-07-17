@@ -15,20 +15,29 @@ import (
 	"time"
 )
 
+// CtxKey is a `string` type for keys in the context
 type CtxKey string
 
 const (
+	// CtxKeyTimeoutSeconds is the key for an integer which is the number
+	// of seconds given for a request to timeout
 	CtxKeyTimeoutSeconds CtxKey = "timeoutSeconds"
-	CtxKeyXSRFToken      CtxKey = "xsrfToken"
+
+	// CtxKeyXSRFToken is the context key for the MyRadio XSRF token in
+	// the session
+	CtxKeyXSRFToken CtxKey = "xsrfToken"
 )
 
-type MyRadioLoginEnvironment struct {
+// LoginSession provides a login session for MyRadio after authenticating
+// with a MyRadio username and password
+type LoginSession struct {
 	client    *http.Client
 	xsrfToken string
 	timeout   time.Duration
 }
 
-func (e *MyRadioLoginEnvironment) Close() {
+// Close will log out the MyRadio session
+func (e *LoginSession) Close() {
 	ctx, cnl := context.WithTimeout(context.Background(), e.timeout)
 	defer cnl()
 
@@ -46,8 +55,10 @@ func (e *MyRadioLoginEnvironment) Close() {
 	e.client.Do(req)
 }
 
-func CreateMyRadioLoginEnvironment(ctx context.Context) (*MyRadioLoginEnvironment, error) {
-	myr := MyRadioLoginEnvironment{
+// CreateMyRadioLoginSession gets an XSRF token from MyRadio, and will
+// then log in to MyRadio, returning the LoginSession
+func CreateMyRadioLoginSession(ctx context.Context) (*LoginSession, error) {
+	myr := LoginSession{
 		client: http.DefaultClient,
 	}
 
@@ -78,7 +89,7 @@ func CreateMyRadioLoginEnvironment(ctx context.Context) (*MyRadioLoginEnvironmen
 	return &myr, nil
 }
 
-func (e *MyRadioLoginEnvironment) login(ctx context.Context) error {
+func (e *LoginSession) login(ctx context.Context) error {
 	form := url.Values{
 		"myradio_login-user":         []string{"***"},
 		"myradio_login-password":     []string{"***"},

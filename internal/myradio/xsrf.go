@@ -36,7 +36,7 @@ func getXSRFTokenFromInputTag(tag html.Token) string {
 	return ""
 }
 
-func (myr *MyRadioLoginEnvironment) getXSRFTokenFromMyRadio(ctx context.Context) (string, error) {
+func (myr *LoginSession) getXSRFTokenFromMyRadio(ctx context.Context) (string, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://ury.org.uk/myradio", nil)
 	if err != nil {
 		return "", err

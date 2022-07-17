@@ -13,12 +13,16 @@ import (
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 )
 
+// CtxKey is a `string` type for keys in the context
 type CtxKey string
 
 const (
+	// CtxShowIDKey is a key for use in a context that will contain the show ID
 	CtxShowIDKey CtxKey = "showID"
 )
 
+// GenerationEnvironment contains all the attributes needed for generating
+// the showimages
 type GenerationEnvironment struct {
 	Config           config.Config
 	MyRadioSession   *myradio.Session

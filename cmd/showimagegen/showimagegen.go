@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/UniversityRadioYork/myradio-go"
-	myrle "github.com/UniversityRadioYork/showimagegen-2/internal/myradio"
+	myrsess "github.com/UniversityRadioYork/showimagegen-2/internal/myradio"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/logging"
@@ -33,8 +33,8 @@ func showImageGenerator() {
 	}
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, myrle.CtxKeyTimeoutSeconds, config.RequestTimeoutSeconds)
-	myrLoginEnv, err := myrle.CreateMyRadioLoginEnvironment(ctx)
+	ctx = context.WithValue(ctx, myrsess.CtxKeyTimeoutSeconds, config.RequestTimeoutSeconds)
+	myrLoginEnv, err := myrsess.CreateMyRadioLoginSession(ctx)
 
 	if err != nil {
 		panic(err)
@@ -63,7 +63,7 @@ func daemon() {
 
 	defer func() {
 		if r := recover(); r != nil {
-			logging.Error(fmt.Errorf("ShowImageGenerator Failed: %v", r))
+			logging.Error(fmt.Errorf("showImageGenerator Failed: %v", r))
 		}
 	}()
 

@@ -13,7 +13,7 @@ import (
 	"strconv"
 
 	"github.com/UniversityRadioYork/myradio-go"
-	myrle "github.com/UniversityRadioYork/showimagegen-2/internal/myradio"
+	myrsess "github.com/UniversityRadioYork/showimagegen-2/internal/myradio"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
 )
@@ -50,7 +50,7 @@ func main() {
 			// TODO
 		}
 
-		myRadioLoginEnvironment, err := myrle.CreateMyRadioLoginEnvironment(context.TODO())
+		myRadioLoginEnvironment, err := myrsess.CreateMyRadioLoginSession(context.TODO())
 		if err != nil {
 			// TODO
 		}

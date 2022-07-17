@@ -18,6 +18,8 @@ var imageGenerators []im.ImageGenerator = []im.ImageGenerator{
 	im.LegacyImageGenerator{},
 }
 
+// GenerateImageForShow will call an appropriate ImageGenerator to make an image
+// then call the SetPhotoCallback function to associate that image to the show.
 func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta) {
 	ctx := context.Background()
 

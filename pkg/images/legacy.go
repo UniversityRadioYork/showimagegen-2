@@ -24,9 +24,13 @@ import (
 	"golang.org/x/image/math/fixed"
 )
 
+// LegacyImageGenerator is used to generate images following the
+// same style as the old image generator.
 type LegacyImageGenerator struct {
 }
 
+// Generate takes the context containing the show info and creates the image,
+// returning the path to it.
 func (g LegacyImageGenerator) Generate(ctx context.Context) (string, error) {
 	show, ok := ctx.Value(CtxShowKey).(myradio.ShowMeta)
 	if !ok {
