@@ -7,30 +7,35 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package generator
 
 import (
+	"context"
+	"time"
+
 	"github.com/UniversityRadioYork/myradio-go"
-	"github.com/UniversityRadioYork/showimagegen-2/pkg/images"
+	im "github.com/UniversityRadioYork/showimagegen-2/pkg/images"
 )
 
-var imageGenerators []images.ImageGenerator = []images.ImageGenerator{
-	images.LegacyImageGenerator{},
+var imageGenerators []im.ImageGenerator = []im.ImageGenerator{
+	im.LegacyImageGenerator{},
 }
 
 func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta) {
-	imageInfo := images.ImageInfo{
-		Title:       show.Title,
-		ShowSubtype: "TODO",
-		BrandHandle: e.Config.Branding,
-	}
+	ctx := context.Background()
+
+	ctx = context.WithValue(ctx, im.CtxShowKey, show)
+	ctx = context.WithValue(ctx, im.CtxBrandHandleKey, e.Config.Branding)
 
 	// TODO: make random choice
 	// TODO: goroutine it
-	newImage, err := imageGenerators[0].Generate(imageInfo)
+	newImage, err := imageGenerators[0].Generate(ctx)
 
 	if err != nil {
 		// TODO
 	}
 
 	// TODO
-	e.MyRadioLoginEnvironment.SetShowPhoto(int(show.ShowID), newImage)
+	var cnl context.CancelFunc
+	ctx, cnl = context.WithTimeout(ctx, 5*time.Second)
+	defer cnl()
+	e.SetPhotoCallback(ctx, newImage)
 
 }

@@ -7,45 +7,50 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package main
 
 import (
+	"context"
 	"flag"
+	"fmt"
 	"time"
 
 	"github.com/UniversityRadioYork/myradio-go"
 	myrle "github.com/UniversityRadioYork/showimagegen-2/internal/myradio"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
+	"github.com/UniversityRadioYork/showimagegen-2/pkg/logging"
 )
 
 func showImageGenerator() {
 	config, err := config.NewConfigFromYAML()
 
 	if err != nil {
-		// TODO
+		panic(err)
 	}
 
 	myr, err := myradio.NewSessionFromKeyFile()
 
 	if err != nil {
-		// TODO
+		panic(err)
 	}
 
-	myrLoginEnv, err := myrle.CreateMyRadioLoginEnvironment()
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, myrle.CtxKeyTimeoutSeconds, config.RequestTimeoutSeconds)
+	myrLoginEnv, err := myrle.CreateMyRadioLoginEnvironment(ctx)
 
 	if err != nil {
-		// TODO
+		panic(err)
 	}
 
 	defer myrLoginEnv.Close()
 
 	env := generator.GenerationEnvironment{
-		Config:                  config,
-		MyRadioSession:          myr,
-		MyRadioLoginEnvironment: myrLoginEnv,
+		Config:           config,
+		MyRadioSession:   myr,
+		SetPhotoCallback: myrLoginEnv.SetShowPhoto,
 	}
 
 	shows, err := env.GetShowsToGenerateImageFor()
 	if err != nil {
-		// TODO
+		panic(err)
 	}
 
 	for _, show := range shows {
@@ -54,17 +59,31 @@ func showImageGenerator() {
 
 }
 
+func daemon() {
+
+	defer func() {
+		if r := recover(); r != nil {
+			logging.Error(fmt.Errorf("ShowImageGenerator Failed: %v", r))
+		}
+	}()
+
+	showImageGenerator()
+
+}
+
 func main() {
 
 	daemonMode := flag.Bool("daemon", false, "Usage TODO")
 	flag.Parse()
+
+	logging.Info(fmt.Sprintf("Show Image Generator | Running as Daemon: %v", *daemonMode))
 
 	showImageGenerator()
 
 	if *daemonMode {
 		for {
 			time.Sleep(time.Hour)
-			showImageGenerator()
+			daemon()
 		}
 	}
 }

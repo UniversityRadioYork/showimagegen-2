@@ -6,18 +6,8 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 
 package myradio
 
-type MyRadioLoginEnvironment struct {
-}
+import "context"
 
-func (e *MyRadioLoginEnvironment) Close() {
-	// TODO
-}
-
-func CreateMyRadioLoginEnvironment() (*MyRadioLoginEnvironment, error) {
-	// TODO
-	return &MyRadioLoginEnvironment{}, nil
-}
-
-func (e *MyRadioLoginEnvironment) SetShowPhoto(showID int, path string) {
+func (e *MyRadioLoginEnvironment) SetShowPhoto(ctx context.Context, path string) {
 	// TODO
 }

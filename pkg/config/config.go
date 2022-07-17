@@ -7,10 +7,13 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package config
 
 type Config struct {
-	Branding string
+	Branding              string
+	RequestTimeoutSeconds int
 }
 
 func NewConfigFromYAML() (Config, error) {
 	// TODO
-	return Config{}, nil
+	return Config{
+		RequestTimeoutSeconds: 5,
+	}, nil
 }

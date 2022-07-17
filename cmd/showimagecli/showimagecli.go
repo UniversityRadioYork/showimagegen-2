@@ -7,6 +7,7 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strconv"
@@ -49,16 +50,16 @@ func main() {
 			// TODO
 		}
 
-		myRadioLoginEnvironment, err := myrle.CreateMyRadioLoginEnvironment()
+		myRadioLoginEnvironment, err := myrle.CreateMyRadioLoginEnvironment(context.TODO())
 		if err != nil {
 			// TODO
 		}
 		defer myRadioLoginEnvironment.Close()
 
 		env := generator.GenerationEnvironment{
-			Config:                  config,
-			MyRadioSession:          myr,
-			MyRadioLoginEnvironment: myRadioLoginEnvironment,
+			Config:           config,
+			MyRadioSession:   myr,
+			SetPhotoCallback: myRadioLoginEnvironment.SetShowPhoto,
 		}
 
 		show, err := env.MyRadioSession.GetShow(showID)

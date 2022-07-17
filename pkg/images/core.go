@@ -6,6 +6,15 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 
 package images
 
+import "context"
+
+type CtxKey string
+
+const (
+	CtxShowKey        CtxKey = "show"
+	CtxBrandHandleKey CtxKey = "brandHandle"
+)
+
 type ImageInfo struct {
 	Title       string
 	BrandHandle string
@@ -13,5 +22,5 @@ type ImageInfo struct {
 }
 
 type ImageGenerator interface {
-	Generate(show ImageInfo) (string, error)
+	Generate(ctx context.Context) (string, error)
 }
