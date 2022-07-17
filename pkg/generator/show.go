@@ -36,6 +36,8 @@ func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta) {
 	var cnl context.CancelFunc
 	ctx, cnl = context.WithTimeout(ctx, 5*time.Second)
 	defer cnl()
-	e.SetPhotoCallback(ctx, newImage)
+	if err := e.SetPhotoCallback(ctx, newImage); err != nil {
+		// TODO
+	}
 
 }

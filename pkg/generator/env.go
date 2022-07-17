@@ -13,8 +13,14 @@ import (
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 )
 
+type CtxKey string
+
+const (
+	CtxShowIDKey CtxKey = "showID"
+)
+
 type GenerationEnvironment struct {
 	Config           config.Config
 	MyRadioSession   *myradio.Session
-	SetPhotoCallback func(ctx context.Context, path string)
+	SetPhotoCallback func(ctx context.Context, path string) error
 }
