@@ -27,6 +27,7 @@ func usage() {
 }
 
 func main() {
+	// TODO --version flag
 	args := os.Args[1:]
 
 	if len(args) != 2 {

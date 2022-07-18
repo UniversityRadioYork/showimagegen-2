@@ -77,7 +77,21 @@ func daemon() {
 func main() {
 
 	daemonMode := flag.Bool("daemon", false, "Usage TODO")
+	versionFlag := flag.Bool("version", false, "display version")
 	flag.Parse()
+
+	if *versionFlag {
+		commit, err := config.GetCommitHash()
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf(`URY Show Image Generator 2 - Electric Photoloo
+	
+Commit: %v
+`, commit)
+		return
+	}
 
 	logging.Info(fmt.Sprintf("Show Image Generator | Running as Daemon: %v", *daemonMode))
 
