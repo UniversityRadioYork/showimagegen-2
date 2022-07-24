@@ -13,14 +13,17 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/UniversityRadioYork/myradio-go"
 )
 
 // LoginSession provides a login session for MyRadio after authenticating
 // with a MyRadio username and password
 type LoginSession struct {
-	client    *http.Client
-	xsrfToken string
-	timeout   time.Duration
+	client     *http.Client
+	xsrfToken  string
+	timeout    time.Duration
+	apiSession *myradio.Session
 }
 
 // Close will log out the MyRadio session
@@ -44,9 +47,10 @@ func (e *LoginSession) Close() {
 
 // CreateMyRadioLoginSession gets an XSRF token from MyRadio, and will
 // then log in to MyRadio, returning the LoginSession
-func CreateMyRadioLoginSession(username, password string, timeout int) (*LoginSession, error) {
+func CreateMyRadioLoginSession(username, password string, timeout int, apiSession *myradio.Session) (*LoginSession, error) {
 	myr := LoginSession{
-		client: http.DefaultClient,
+		client:     http.DefaultClient,
+		apiSession: apiSession,
 	}
 
 	myr.client.Jar = cookieJar{

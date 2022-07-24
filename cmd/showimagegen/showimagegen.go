@@ -32,7 +32,7 @@ func showImageGenerator() {
 		panic(err)
 	}
 
-	myrLoginSess, err := myrsess.CreateMyRadioLoginSession(config.MyRadioUsername, config.MyRadioPassword, config.RequestTimeoutSeconds)
+	myrLoginSess, err := myrsess.CreateMyRadioLoginSession(config.MyRadioUsername, config.MyRadioPassword, config.RequestTimeoutSeconds, myr)
 
 	if err != nil {
 		panic(err)

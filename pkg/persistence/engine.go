@@ -16,9 +16,11 @@ import (
 const bufferSize int = 5
 
 type persistenceEntry struct {
-	showID   int
-	title    string
-	filepath string
+	showID        int
+	Title         string
+	Filepath      string
+	UploadedPhoto string
+	Datetime      time.Time
 }
 
 // Engine contains the internal representation of our persistence, along with
@@ -27,7 +29,7 @@ type Engine struct {
 	filepath     string
 	lockFilepath string
 	entries      chan persistenceEntry
-	state        map[int]map[string]string
+	state        map[int][]persistenceEntry
 }
 
 // CreatePersistenceEngine will return a default Engine, along with an error
@@ -77,7 +79,7 @@ func (e *Engine) read() error {
 	data, err := os.ReadFile(e.filepath)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			e.state = make(map[int]map[string]string)
+			e.state = make(map[int][]persistenceEntry)
 			return nil
 		}
 
@@ -106,7 +108,7 @@ func (e *Engine) write() error {
 		return err
 	}
 
-	if err = os.WriteFile(e.filepath, data, os.ModeAppend); err != nil {
+	if err = os.WriteFile(e.filepath, data, 0644); err != nil {
 		return err
 	}
 
@@ -123,23 +125,22 @@ func (e *Engine) Daemon() {
 			break
 		}
 
-		if e.state[entry.showID] == nil {
-			e.state[entry.showID] = make(map[string]string)
-		}
-		e.state[entry.showID][entry.title] = entry.filepath
+		e.state[entry.showID] = append(e.state[entry.showID], entry)
 
 		if err := e.write(); err != nil {
-			// TODO
+			panic(err) // TODO
 		}
 	}
 }
 
 // AddEntry will add a title/filepath pair to the show ID in the persistence
-func (e *Engine) AddEntry(showID int, title, filepath string) {
+func (e *Engine) AddEntry(showID int, title, filepath, uploadedPhoto string) {
 	e.entries <- persistenceEntry{
-		showID:   showID,
-		title:    title,
-		filepath: filepath,
+		showID:        showID,
+		Title:         title,
+		Filepath:      filepath,
+		UploadedPhoto: uploadedPhoto,
+		Datetime:      time.Now(),
 	}
 }
 

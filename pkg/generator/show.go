@@ -35,10 +35,12 @@ func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta, bran
 	// TODO
 	ctx, cnl := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cnl()
-	if err := e.SetPhotoCallback(ctx, show.ShowID, newImage); err != nil {
+
+	uploadedPhoto, err := e.SetPhotoCallback(ctx, show.ShowID, newImage)
+	if err != nil {
 		// TODO
 	}
 
-	e.AddToPersistence(show.ShowID, show.Title, newImage)
+	e.AddToPersistence(show.ShowID, show.Title, newImage, uploadedPhoto)
 
 }

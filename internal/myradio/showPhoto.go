@@ -19,21 +19,21 @@ import (
 
 // SetShowPhoto will take a context, a showIDKey value, and a path to an image
 // and set the show image using the *LoginSession
-func (e *LoginSession) SetShowPhoto(ctx context.Context, showID int, path string) error {
+func (e *LoginSession) SetShowPhoto(ctx context.Context, showID int, path string) (string, error) {
 	img, err := os.Open(path)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer img.Close()
 
 	contents, err := io.ReadAll(img)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	stat, err := img.Stat()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	body := new(bytes.Buffer)
@@ -42,32 +42,37 @@ func (e *LoginSession) SetShowPhoto(ctx context.Context, showID int, path string
 
 	part, err := writer.CreateFormFile("sched_showphoto-image_file", stat.Name())
 	if err != nil {
-		return err
+		return "", err
 	}
 	part.Write(contents)
 
 	if err = writer.WriteField("sched_showphoto-show_id", strconv.Itoa(showID)); err != nil {
-		return err
+		return "", err
 	}
 
 	if err = writer.WriteField("sched_showphoto-__xsrf-token", e.xsrfToken); err != nil {
-		return err
+		return "", err
 	}
 
 	writer.Close()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("https://ury.org.uk/myradio/Scheduler/showPhoto?show_id=%v", showID), body)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Content-Length", strconv.Itoa(body.Len()))
 
 	if _, err = e.client.Do(req); err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	show, err := e.apiSession.GetShow(showID)
+	if err != nil {
+		return "", err
+	}
+
+	return show.Photo, nil
 
 }

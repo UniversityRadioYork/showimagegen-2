@@ -18,6 +18,6 @@ import (
 type GenerationEnvironment struct {
 	Config           *config.Config
 	MyRadioSession   *myradio.Session
-	SetPhotoCallback func(ctx context.Context, showID int, path string) error
-	AddToPersistence func(showID int, title, filepath string)
+	SetPhotoCallback func(ctx context.Context, showID int, path string) (string, error)
+	AddToPersistence func(showID int, title, filepath, uploadedPhoto string)
 }

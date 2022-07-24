@@ -50,7 +50,7 @@ func main() {
 			// TODO
 		}
 
-		myRadioLoginEnvironment, err := myrsess.CreateMyRadioLoginSession(config.MyRadioUsername, config.MyRadioPassword, config.RequestTimeoutSeconds)
+		myRadioLoginEnvironment, err := myrsess.CreateMyRadioLoginSession(config.MyRadioUsername, config.MyRadioPassword, config.RequestTimeoutSeconds, myr)
 		if err != nil {
 			// TODO
 		}
