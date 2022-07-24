@@ -7,7 +7,6 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"time"
@@ -32,12 +31,7 @@ func showImageGenerator() {
 		panic(err)
 	}
 
-	ctx := context.Background()
-	ctx = context.WithValue(ctx, myrsess.CtxKeyTimeoutSeconds, config.RequestTimeoutSeconds)
-	ctx = context.WithValue(ctx, myrsess.CtxKeyMyRadioUsername, config.MyRadioUsername)
-	ctx = context.WithValue(ctx, myrsess.CtxKeyMyRadioPassword, config.MyRadioPassword)
-
-	myrLoginSess, err := myrsess.CreateMyRadioLoginSession(ctx)
+	myrLoginSess, err := myrsess.CreateMyRadioLoginSession(config.MyRadioUsername, config.MyRadioPassword, config.RequestTimeoutSeconds)
 
 	if err != nil {
 		panic(err)
@@ -57,7 +51,7 @@ func showImageGenerator() {
 	}
 
 	for _, show := range shows {
-		env.GenerateImageForShow(show)
+		env.GenerateImageForShow(show, config.Branding)
 	}
 
 }

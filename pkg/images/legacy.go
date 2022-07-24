@@ -7,8 +7,6 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package images
 
 import (
-	"context"
-	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -18,7 +16,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/UniversityRadioYork/myradio-go"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
@@ -31,12 +28,7 @@ type LegacyImageGenerator struct {
 
 // Generate takes the context containing the show info and creates the image,
 // returning the path to it.
-func (g LegacyImageGenerator) Generate(ctx context.Context) (string, error) {
-	show, ok := ctx.Value(CtxShowKey).(myradio.ShowMeta)
-	if !ok {
-		return "", fmt.Errorf("%s in ctx is not myradio ShowMeta", CtxShowKey)
-	}
-
+func (g LegacyImageGenerator) Generate(data ShowImageData) (string, error) {
 	var backgrounds []string
 	filepath.WalkDir("assets/bw_backgrounds", func(path string, stat fs.DirEntry, err error) error {
 		if err != nil {
@@ -96,7 +88,7 @@ func (g LegacyImageGenerator) Generate(ctx context.Context) (string, error) {
 		},
 	}
 
-	textDrawer.DrawString(show.Title)
+	textDrawer.DrawString(data.Show.Title)
 
 	// TODO Show ID
 	outFile, err := os.Create("test.png")

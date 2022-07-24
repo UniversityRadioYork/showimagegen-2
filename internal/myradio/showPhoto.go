@@ -15,18 +15,11 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-
-	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
 )
 
-// SetShowPhoto will take a context with a CtxShowIDKey value, and a path to an image
+// SetShowPhoto will take a context, a showIDKey value, and a path to an image
 // and set the show image using the *LoginSession
-func (e *LoginSession) SetShowPhoto(ctx context.Context, path string) error {
-	showID, ok := ctx.Value(generator.CtxShowIDKey).(int)
-	if !ok {
-		return fmt.Errorf("%v is not a valid show ID", ctx.Value(generator.CtxShowIDKey))
-	}
-
+func (e *LoginSession) SetShowPhoto(ctx context.Context, showID int, path string) error {
 	img, err := os.Open(path)
 	if err != nil {
 		return err

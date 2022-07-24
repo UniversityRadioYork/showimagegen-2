@@ -7,7 +7,6 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"strconv"
@@ -51,7 +50,7 @@ func main() {
 			// TODO
 		}
 
-		myRadioLoginEnvironment, err := myrsess.CreateMyRadioLoginSession(context.TODO())
+		myRadioLoginEnvironment, err := myrsess.CreateMyRadioLoginSession(config.MyRadioUsername, config.MyRadioPassword, config.RequestTimeoutSeconds)
 		if err != nil {
 			// TODO
 		}
@@ -68,7 +67,7 @@ func main() {
 			// TODO
 		}
 
-		env.GenerateImageForShow(*show)
+		env.GenerateImageForShow(*show, config.Branding)
 	case "recover":
 		// TODO
 	default:
