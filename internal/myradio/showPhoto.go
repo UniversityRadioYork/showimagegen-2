@@ -64,7 +64,6 @@ func (e *LoginSession) SetShowPhoto(ctx context.Context, showID int, path string
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Content-Length", strconv.Itoa(body.Len()))
 
-	fmt.Println("doing")
 	if _, err = e.client.Do(req); err != nil {
 		return err
 	}

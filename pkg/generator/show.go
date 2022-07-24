@@ -39,4 +39,6 @@ func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta, bran
 		// TODO
 	}
 
+	e.AddToPersistence(show.ShowID, show.Title, newImage)
+
 }

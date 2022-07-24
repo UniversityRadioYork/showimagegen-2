@@ -16,6 +16,7 @@ import (
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/logging"
+	"github.com/UniversityRadioYork/showimagegen-2/pkg/persistence"
 )
 
 func showImageGenerator() {
@@ -39,10 +40,20 @@ func showImageGenerator() {
 
 	defer myrLoginSess.Close()
 
+	persistenceEngine, err := persistence.CreatePersistenceEngine()
+	if err != nil {
+		panic(err)
+	}
+
+	defer persistenceEngine.Close()
+
+	go persistenceEngine.Daemon()
+
 	env := generator.GenerationEnvironment{
 		Config:           config,
 		MyRadioSession:   myr,
 		SetPhotoCallback: myrLoginSess.SetShowPhoto,
+		AddToPersistence: persistenceEngine.AddEntry,
 	}
 
 	shows, err := env.GetShowsToGenerateImageFor()

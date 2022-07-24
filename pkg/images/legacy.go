@@ -58,7 +58,7 @@ func (g LegacyImageGenerator) Generate(data ShowImageData) (string, error) {
 	}
 
 	// TODO Pick Appropriately
-	subtypeColourBarPath := "assets/subtype_colour_bars/Flagship.png"
+	subtypeColourBarPath := "assets/subtype_colour_bars/primetime.png"
 	subtypeColourBar, err := os.Open(subtypeColourBarPath)
 	if err != nil {
 		// TODO
@@ -100,5 +100,5 @@ func (g LegacyImageGenerator) Generate(data ShowImageData) (string, error) {
 
 	png.Encode(outFile, showImage)
 
-	return "TODO", nil
+	return "test.png", nil
 }
