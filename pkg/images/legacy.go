@@ -7,9 +7,12 @@ Author: Michael Grace <michael.grace@ury.org.uk>
 package images
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
+	"log"
+	"time"
 
 	"image/png"
 	"io/fs"
@@ -29,47 +32,46 @@ type LegacyImageGenerator struct {
 // Generate takes the context containing the show info and creates the image,
 // returning the path to it.
 func (g LegacyImageGenerator) Generate(data ShowImageData) (string, error) {
+	log.Printf("%v | using legacy image generator", data.Show.ShowID)
+
 	var backgrounds []string
-	filepath.WalkDir("assets/bw_backgrounds", func(path string, stat fs.DirEntry, err error) error {
+	if err := filepath.WalkDir("assets/bw_backgrounds", func(path string, stat fs.DirEntry, err error) error {
 		if err != nil {
-			// TODO
-			panic(err)
+			return err
 		}
 		if !stat.IsDir() {
 			backgrounds = append(backgrounds, path)
 		}
 		return nil
-	})
+	}); err != nil {
+		return "", err
+	}
 
 	// TODO Pick Random
 	backgroundPath := backgrounds[0]
 	background, err := os.Open(backgroundPath)
 	if err != nil {
-		// TODO
-		panic(err)
+		return "", err
 	}
 	defer background.Close()
 
 	backgroundPng, err := png.Decode(background)
 
 	if err != nil {
-		// TODO
-		panic(err)
+		return "", err
 	}
 
 	// TODO Pick Appropriately
 	subtypeColourBarPath := "assets/subtype_colour_bars/primetime.png"
 	subtypeColourBar, err := os.Open(subtypeColourBarPath)
 	if err != nil {
-		// TODO
-		panic(err)
+		return "", err
 	}
 	defer subtypeColourBar.Close()
 
 	colourBarPng, err := png.Decode(subtypeColourBar)
 	if err != nil {
-		// TODO
-		panic(err)
+		return "", err
 	}
 
 	showImage := image.NewRGBA(backgroundPng.Bounds())
@@ -90,15 +92,16 @@ func (g LegacyImageGenerator) Generate(data ShowImageData) (string, error) {
 
 	textDrawer.DrawString(data.Show.Title)
 
-	// TODO Show ID
-	outFile, err := os.Create("test.png")
+	imageFile := fmt.Sprintf("out/%v.%v.png", data.Show.ShowID, time.Now().Unix())
+	outFile, err := os.Create(imageFile)
 	if err != nil {
-		// TODO
-		panic(err)
+		return "", err
 	}
 	defer outFile.Close()
 
-	png.Encode(outFile, showImage)
+	if err := png.Encode(outFile, showImage); err != nil {
+		return "", err
+	}
 
-	return "test.png", nil
+	return imageFile, nil
 }

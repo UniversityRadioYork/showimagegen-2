@@ -9,13 +9,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
+	"sync"
 	"time"
 
 	"github.com/UniversityRadioYork/myradio-go"
 	myrsess "github.com/UniversityRadioYork/showimagegen-2/internal/myradio"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
-	"github.com/UniversityRadioYork/showimagegen-2/pkg/logging"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/persistence"
 )
 
@@ -61,9 +62,17 @@ func showImageGenerator() {
 		panic(err)
 	}
 
+	var wg sync.WaitGroup
 	for _, show := range shows {
-		env.GenerateImageForShow(show, config.Branding)
+		wg.Add(1)
+		go func(show myradio.ShowMeta) {
+			defer wg.Done()
+			env.GenerateImageForShow(show, config.Branding)
+		}(show)
 	}
+
+	wg.Wait()
+	log.Println("ShowImageGen Done")
 
 }
 
@@ -71,7 +80,7 @@ func daemon() {
 
 	defer func() {
 		if r := recover(); r != nil {
-			logging.Error(fmt.Errorf("showImageGenerator Failed: %v", r))
+			log.Printf("showImageGenerator Failed: %v\n", r)
 		}
 	}()
 
@@ -98,7 +107,7 @@ Commit: %v
 		return
 	}
 
-	logging.Info(fmt.Sprintf("Show Image Generator | Running as Daemon: %v", *daemonMode))
+	log.Printf("Show Image Generator | Running as Daemon: %v", *daemonMode)
 
 	showImageGenerator()
 

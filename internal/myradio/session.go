@@ -9,6 +9,7 @@ package myradio
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -28,6 +29,7 @@ type LoginSession struct {
 
 // Close will log out the MyRadio session
 func (e *LoginSession) Close() {
+	log.Printf("logging out of myradio")
 	ctx, cnl := context.WithTimeout(context.Background(), e.timeout)
 	defer cnl()
 
@@ -48,6 +50,7 @@ func (e *LoginSession) Close() {
 // CreateMyRadioLoginSession gets an XSRF token from MyRadio, and will
 // then log in to MyRadio, returning the LoginSession
 func CreateMyRadioLoginSession(username, password string, timeout int, apiSession *myradio.Session) (*LoginSession, error) {
+	log.Printf("creating myradio login session for user %s", username)
 	myr := LoginSession{
 		client:     http.DefaultClient,
 		apiSession: apiSession,
@@ -66,13 +69,17 @@ func CreateMyRadioLoginSession(username, password string, timeout int, apiSessio
 	ctx, cnl := context.WithTimeout(context.Background(), time.Duration(2)*myr.timeout)
 	defer cnl()
 
+	log.Println("getting myradio xsrf token for this session")
 	var err error
 	myr.xsrfToken, err = myr.getXSRFTokenFromMyRadio(ctx)
 	if err != nil {
+		log.Printf("failed to get myradio xsrf token: %v", err)
 		return nil, err
 	}
 
+	log.Printf("logging in to myradio as %s", username)
 	if err := myr.login(ctx, username, password); err != nil {
+		log.Printf("failed to login: %v", err)
 		return nil, err
 	}
 

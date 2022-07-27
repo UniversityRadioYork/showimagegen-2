@@ -11,6 +11,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -20,6 +21,7 @@ import (
 // SetShowPhoto will take a context, a showIDKey value, and a path to an image
 // and set the show image using the *LoginSession
 func (e *LoginSession) SetShowPhoto(ctx context.Context, showID int, path string) (string, error) {
+	log.Printf("%v | using myradio to set show photo to %s", showID, path)
 	img, err := os.Open(path)
 	if err != nil {
 		return "", err
@@ -56,6 +58,7 @@ func (e *LoginSession) SetShowPhoto(ctx context.Context, showID int, path string
 
 	writer.Close()
 
+	log.Printf("%v | doing the upload request", showID)
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("https://ury.org.uk/myradio/Scheduler/showPhoto?show_id=%v", showID), body)
 	if err != nil {
 		return "", err
