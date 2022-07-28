@@ -22,7 +22,7 @@ var imageGenerators []im.ImageGenerator = []im.ImageGenerator{
 
 // GenerateImageForShow will call an appropriate ImageGenerator to make an image
 // then call the SetPhotoCallback function to associate that image to the show.
-func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta, branding string) error {
+func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta, branding []string) error {
 	log.Printf("%v | creating show image for %s", show.ShowID, show.Title)
 
 	rand.Seed(time.Now().Unix())

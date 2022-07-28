@@ -14,7 +14,7 @@ import (
 
 // Config is a collection of all options that can be set in configuration.
 type Config struct {
-	Branding              string
+	Branding              []string
 	RequestTimeoutSeconds int
 	MyRadioUsername       string
 	MyRadioPassword       string

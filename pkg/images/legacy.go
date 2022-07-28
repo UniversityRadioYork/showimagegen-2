@@ -29,6 +29,8 @@ import (
 type LegacyImageGenerator struct {
 }
 
+const brandingFontSize = 48
+
 func getBackgroundFilepaths() ([]string, error) {
 	var backgrounds []string
 	if err := filepath.WalkDir("assets/bw_backgrounds", func(path string, stat fs.DirEntry, err error) error {
@@ -46,7 +48,7 @@ func getBackgroundFilepaths() ([]string, error) {
 	return backgrounds, nil
 }
 
-func addBranding(baseImage *image.RGBA, branding string) *image.RGBA {
+func addBranding(baseImage *image.RGBA, branding []string) *image.RGBA {
 	// TODO multiple lines
 	fontFile, err := os.ReadFile("assets/fonts/Raleway-LightItalic.ttf")
 	if err != nil {
@@ -60,26 +62,31 @@ func addBranding(baseImage *image.RGBA, branding string) *image.RGBA {
 
 	ctx := freetype.NewContext()
 	ctx.SetFont(f)
-	ctx.SetFontSize(48)
+	ctx.SetFontSize(brandingFontSize)
 	ctx.SetClip(baseImage.Bounds())
 	ctx.SetDst(baseImage)
 	ctx.SetSrc(image.White)
 
-	advance := font.MeasureString(
-		truetype.NewFace(f, &truetype.Options{
-			Size: 48,
-		}),
-		branding,
-	)
+	for idx, line := range branding {
+		advance := font.MeasureString(
+			truetype.NewFace(f, &truetype.Options{
+				Size: brandingFontSize,
+			}),
+			line,
+		)
 
-	if _, err := ctx.DrawString(
-		branding,
-		freetype.Pt(
-			(baseImage.Bounds().Dx()-advance.Round())/2,
-			baseImage.Bounds().Dy()*2/3,
-		),
-	); err != nil {
-		// TODO
+		deltaY := float64(idx*ctx.PointToFixed(brandingFontSize).Round()) * 1.5
+
+		if _, err := ctx.DrawString(
+			line,
+			freetype.Pt(
+				(baseImage.Bounds().Dx()-advance.Round())/2,
+				(baseImage.Bounds().Dy()*2/3)+int(deltaY),
+			),
+		); err != nil {
+			// TODO
+		}
+
 	}
 
 	return baseImage

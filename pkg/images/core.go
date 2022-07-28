@@ -13,7 +13,7 @@ import (
 // ShowImageData represents what is neccesary to make any show image
 type ShowImageData struct {
 	Show     myradio.ShowMeta
-	Branding string
+	Branding []string
 }
 
 // ImageGenerator defines an interface all image generators must follow

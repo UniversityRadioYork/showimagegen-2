@@ -1,4 +1,6 @@
-branding: @URY1350
+branding: 
+    - "ury.org.uk"
+    - "@URY1350"
 requesttimeoutseconds: 5
 myradiousername: user
 myradiopassword: pass
