@@ -15,6 +15,7 @@ import (
 	myrsess "github.com/UniversityRadioYork/showimagegen-2/internal/myradio"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/config"
 	"github.com/UniversityRadioYork/showimagegen-2/pkg/generator"
+	"github.com/UniversityRadioYork/showimagegen-2/pkg/persistence"
 )
 
 func usage() {
@@ -29,7 +30,7 @@ func main() {
 	// TODO --version flag
 	args := os.Args[1:]
 
-	if len(args) != 2 {
+	if len(args) != 2 && len(args) != 3 {
 		usage()
 	}
 
@@ -40,6 +41,10 @@ func main() {
 
 	switch args[0] {
 	case "generate":
+		if len(args) != 2 {
+			usage()
+		}
+
 		config, err := config.NewConfigFromYAML("config.yaml")
 		if err != nil {
 			// TODO
@@ -56,10 +61,16 @@ func main() {
 		}
 		defer myRadioLoginEnvironment.Close()
 
+		persistenceEngine, err := persistence.CreatePersistenceEngine()
+		if err != nil {
+			// TODO
+		}
+
 		env := generator.GenerationEnvironment{
 			Config:           config,
 			MyRadioSession:   myr,
 			SetPhotoCallback: myRadioLoginEnvironment.SetShowPhoto,
+			AddToPersistence: persistenceEngine.AddEntry,
 		}
 
 		show, err := env.MyRadioSession.GetShow(showID)
@@ -69,6 +80,15 @@ func main() {
 
 		env.GenerateImageForShow(*show, config.Branding)
 	case "recover":
+		if len(args) == 2 {
+			persistenceEngine, err := persistence.CreatePersistenceEngine()
+			if err != nil {
+				// TODO
+			}
+
+			persistenceEngine.List(showID)
+		}
+
 		// TODO
 	default:
 		usage()
