@@ -9,6 +9,7 @@ package generator
 import (
 	"context"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/UniversityRadioYork/myradio-go"
@@ -24,8 +25,8 @@ var imageGenerators []im.ImageGenerator = []im.ImageGenerator{
 func (e *GenerationEnvironment) GenerateImageForShow(show myradio.ShowMeta, branding string) error {
 	log.Printf("%v | creating show image for %s", show.ShowID, show.Title)
 
-	// TODO: make random choice
-	newImage, err := imageGenerators[0].Generate(im.ShowImageData{
+	rand.Seed(time.Now().Unix())
+	newImage, err := imageGenerators[rand.Intn(len(imageGenerators))].Generate(im.ShowImageData{
 		Show:     show,
 		Branding: branding,
 	})
